@@ -38,6 +38,8 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      *
      * think of what type of keys and values would best suit the requirements
      */
+    
+    private final Map<String,Set<U>> followerList;
 
     /*
      * [CONSTRUCTORS]
@@ -64,12 +66,21 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      *            application
      */
     public SocialNetworkUserImpl(final String name, final String surname, final String user, final int userAge) {
-        super(null, null, null, 0);
+        super(name, surname, user, userAge);
+        /*per ogni User distinto creo una lista di follower distinta*/
+        this.followerList=new HashMap<>();
     }
+
+
 
     /*
      * 2) Define a further constructor where the age defaults to -1
      */
+    /*casistica in cui età non passata => ageUser=-1 per default */
+    public SocialNetworkUserImpl(final String name, final String surname, final String user) {
+        super(name, surname, user, -1);
+        this.followerList=new HashMap<>();
+    }
 
     /*
      * [METHODS]
@@ -78,8 +89,17 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      */
     @Override
     public boolean addFollowedUser(final String circle, final U user) {
-        return false;
-    }
+        /*List<U> listFriends = this.followerList.get(circle);*/
+        /*giustamente non posso usare un Set<U> con un List<U> */
+        Set<U> tempListFriendSet= this.followerList.get(circle);
+        if(tempListFriendSet==null){
+            /*se non esiste il gruppo di amicizia circle lo creo */
+            /*Set<U> groupFriend= new HashSet<U>(); problema di visibilità */
+            tempListFriendSet= new HashSet<U>();
+            this.followerList.put(circle, tempListFriendSet); 
+        }
+        return tempListFriendSet.add(user);
+        }
 
     /**
      *
@@ -88,11 +108,29 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      */
     @Override
     public Collection<U> getFollowedUsersInGroup(final String groupName) {
-        return null;
+        Set<U> tempSet= followerList.get(groupName);
+        if(tempSet==null){
+            return Collections.emptyList();
+            /* errore, in quanto temto ri ritornare qualcosa di null 
+            return new HashSet<U>(tempSet); 
+            ritorno l'originale non 
+            una copia difensiva*/
+        }else{
+        Set<U> tempSetOfNames= new HashSet<U>();
+        for(U name: tempSet){
+            tempSetOfNames.add(name);
+        }
+        return new ArrayList<>(tempSetOfNames);
+        }
     }
 
     @Override
     public List<U> getFollowedUsers() {
-        return null;
+        Set<U> tempSet= new HashSet<U>();
+        for(Set<U> variableSet : followerList.values()){
+            tempSet.addAll(variableSet);
+        }return new ArrayList<U>(tempSet);
+        
+
     }
 }

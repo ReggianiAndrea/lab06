@@ -1,0 +1,9 @@
+# File compilati Java
+*.class
+
+# Directory build di Gradle
+build/
+.gradle/
+
+# Directory bin
+bin/

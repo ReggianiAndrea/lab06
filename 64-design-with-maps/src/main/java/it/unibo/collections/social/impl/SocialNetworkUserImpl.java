@@ -113,8 +113,7 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
             return Collections.emptyList();
             /* errore, in quanto temto ri ritornare qualcosa di null 
             return new HashSet<U>(tempSet); 
-            ritorno l'originale non 
-            una copia difensiva*/
+            */
         }else{
         Set<U> tempSetOfNames= new HashSet<U>();
         for(U name: tempSet){
